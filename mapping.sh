@@ -29,7 +29,7 @@ java -jar ${PICARD}
 # Command: wget
 # Input: url (http:// or ftp://)
 # Ouput: compressed reference sequence (.fa.gz)
-wget xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -O Homo_sapiens.Chr20.fa.gz
+wget ftp://ftp.ensembl.org/pub/release-98/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz -O Homo_sapiens.Chr20.fa.gz
 
 # Extract the reference chromosome
 # Command: gunzip
@@ -41,7 +41,7 @@ gunzip Homo_sapiens.Chr20.fa.gz
 # Command: bwa index
 # Input: reference (.fa)
 # Ouput: indexed reference (.fa.amb, .fa.ann, .fa.bwt, fa.pac, .fa.sa)
-bwa index Homo_sapiens.Chr20.fa
+bwa index Homo_sapiens.Chr20.fa #on "cartographie", définit des portions du chromosome
 
 ######################################################
 ## Mapping of a family trio to the reference genome ##
@@ -79,7 +79,8 @@ bwa index Homo_sapiens.Chr20.fa
 # Command: wget
 # Input: url (http:// or ftp://)
 # Ouput: compressed sequencing reads (.fastq.gz)
-wget xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -O HG02024_SRR822145_1.filt.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR822/SRR822145/SRR822145_1.fastq.gz -O HG02024_SRR822145_1.filt.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR822/SRR822145/SRR822145_2.fastq.gz -O HG02024_SRR822145_2.filt.fastq.gz
 
 
 # Map the paired sequencing reads against the reference Human chromosome 20
@@ -88,7 +89,7 @@ wget xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -O HG02024_SRR822145_1.filt.fastq.gz
 #          -t [number of CPU] (multi-threading)
 # Input: indexed reference (.fa), and compressed sequencing reads (.fastq.gz)
 # Ouput: alignment (.sam)
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx > HG02024_SRR822145.sam
+bwa mem -M -t 4  Homo_sapiens.Chr20.fa HG02024_SRR822145_1.filt.fastq.gz HG02024_SRR822145_2.filt.fastq.gz> HG02024_SRR822145.sam #on aligne les données de la fille avec le chromosome de ref
 
 # (Optional)
 # Compute summary statistics of the alignment
@@ -109,13 +110,13 @@ samtools flagstat HG02024_SRR822145.sam > HG02024_SRR822145.sam.flagstats
 #	      https://broadinstitute.github.io/picard/explain-flags.html
 # Input: alignment (.sam)
 # Ouput: compressed alignment (.bam)
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx > HG02024_SRR822145.bam
+samtools view -@4 -S -h -b -f3 HG02024_SRR822145.sam > HG02024_SRR822145.bam
 
 # Sort the alignment
 # Command: samtools sort
 # Input: compressed alignment (.bam)
 # Ouput: sorted and compressed alignment (.bam)
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx > HG02024_SRR822145.sorted.bam
+samtools sort HG02024_SRR822145.bam > HG02024_SRR822145.sorted.bam
 
 # Add Read group (cf https://gatkforums.broadinstitute.org/gatk/discussion/6472/read-groups)
 # Command: gatk AddOrReplaceReadGroups
