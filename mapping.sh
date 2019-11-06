@@ -1,6 +1,6 @@
 #!/bin/bash
 # Working directory
-WORK_DIR=~/variant-calling/data
+WORK_DIR=~/TPNGS/data
 
 # Create the directory and cd into it
 mkdir -p ${WORK_DIR}
