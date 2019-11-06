@@ -110,7 +110,7 @@ samtools flagstat HG02024_SRR822145.sam > HG02024_SRR822145.sam.flagstats
 #	      https://broadinstitute.github.io/picard/explain-flags.html
 # Input: alignment (.sam)
 # Ouput: compressed alignment (.bam)
-samtools view -@4 -S -h -b -f3 HG02024_SRR822145.sam > HG02024_SRR822145.bam
+samtools view -@ 4 -S -h -b -f 3 HG02024_SRR822145.sam > HG02024_SRR822145.bam
 
 # Sort the alignment
 # Command: samtools sort
@@ -153,26 +153,33 @@ samtools index daughter.bam
 ###########################
 
 # Variables definition
-FTP_SEQ_FOLDER=xxxxxxxxxxxxxxxxxxxxxxxxxx # Ftp folder from 1000Genomes project
+FTP_SEQ_FOLDER=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR359 # Ftp folder from 1000Genomes project
 RUN_ID=SRR359188 # Read group identifier
 SAMPLE_NAME=HG02025 # Sample
-INSTRUMENT_PLATFORM=xxxxxxxxxxxx # Platform/technology used to produce the read
-LIBRARY_NAME=xxxxxxxxxxxx # DNA preparation library identifier
-RUN_NAME=xxxxxxxxxxxx # Platform Unit
-INSERT_SIZE=xxxxxxxxxxxx # Insert size
+INSTRUMENT_PLATFORM=Illumina # Platform/technology used to produce the read
+LIBRARY_NAME=Catch-88584 # DNA preparation library identifier
+RUN_NAME=SRR359188 # Platform Unit
+INSERT_SIZE=96 # Insert size
+
+
 
 # Download paired sequencing reads for the mother
 # Command: wget
 # Input: url (http:// or ftp://)
 # Ouput: compressed sequencing reads (.fastq.gz)
-wget ${FTP_SEQ_FOLDER}/data/${SAMPLE_NAME}/sequence_read/${RUN_ID}_1.filt.fastq.gz -O ${SAMPLE_NAME}_${RUN_ID}_1.filt.fastq.gz
-wget ${FTP_SEQ_FOLDER}/data/${SAMPLE_NAME}/sequence_read/${RUN_ID}_2.filt.fastq.gz -O ${SAMPLE_NAME}_${RUN_ID}_2.filt.fastq.gz
+wget ${FTP_SEQ_FOLDER}/data/${RUN_ID}/sequence_read/${RUN_ID}_1.filt.fastq.gz -O ${SAMPLE_NAME}_${RUN_ID}_1.filt.fastq.gz #on "recompose" l'URL avec les varialbes données au dessus
+wget ${FTP_SEQ_FOLDER}/data/${RUN_ID}/sequence_read/${RUN_ID}_2.filt.fastq.gz -O ${SAMPLE_NAME}_${RUN_ID}_2.filt.fastq.gz
 
 # Map, filter, and sort the paired sequencing reads of the mother against the reference genome
 # Command: bwa mem && samtools view && samtools sort
 # Input: indexed reference (.fa), and compressed sequencing reads (.fastq.gz)
 # Ouput: sorted alignment (.bam)
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx > ${SAMPLE_NAME}_${RUN_ID}.sorted.bam
+bwa mem Homo_sapiens.Chr20.fa HG02024_SRR822145_1.filt.fastq.gz
+        wget ${FTP_SEQ_FOLDER}/data/${RUN_ID}/sequence_read/${RUN_ID}_1.filt.fastq.gz -O ${SAMPLE_NAME}_${RUN_ID}_1.filt.fastq.gz 
+        wget ${FTP_SEQ_FOLDER}/data/${RUN_ID}/sequence_read/${RUN_ID}_2.filt.fastq.gz -O ${SAMPLE_NAME}_${RUN_ID}_2.filt.fastq.gz |
+samtools view -@ 4 -S -h -b -f 3 ${SAMPLE_NAME}_${RUN_ID}.sam |
+samtools sort ${SAMPLE_NAME}_${RUN_ID}.bam
+> ${SAMPLE_NAME}_${RUN_ID}.sorted.bam
 
 # Add Read group
 # Command: gatk AddOrReplaceReadGroups
