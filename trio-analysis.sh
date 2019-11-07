@@ -1,6 +1,6 @@
 #!/bin/bash
 # Working directory
-WORK_DIR=~/variant-calling/data
+WORK_DIR=~/TPNGS/data
 
 # Create the directory and cd into it
 cd ${WORK_DIR}
@@ -23,16 +23,20 @@ REF_GENOME=Homo_sapiens.Chr20.fa
 PEDIGREE=20130606_g1k.ped
 
 # Pedigree
-wget xxxxxxxxxxxxxxxxxxxxxxxxxxxxx -O 20130606_g1k.ped
+wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130606_sample_info/20130606_g1k.ped -O 20130606_g1k.ped
+
 
 
 # Perform joint variant calling
 # Command: gatk GenotypeGVCFs
 # Input : list of genomic variant calling files (.g.vcf) + reference genome (.fa)
 # Output: Variant calling file (.vcf)
-xxxxxxxxxxxxxxxxxxxxxxxxxxx
+java -jar ${GATK} -T GenotypeGVCFs \
+	-R ${REF_GENOME} \
+	--variant daughter.g.vcf \
+	--variant mother.g.vcf \
+	--variant father.g.vcf \
 	-o trio.vcf
-
 
 ##########################
 ### Recalibrate variants #
@@ -73,4 +77,9 @@ java -jar ${GATK} -T VariantEval \
 # Command: gatk GenotypeConcordance
 # Input: 2 variant callings files (.vcf) + reference genome (.fa)
 # Output: Report file (.txt)
-xxxxxxxxxxxxxxxxxxxx
+java -jar ${GATK} -T GenotypeConcordance \
+	-R ${REF_GENOME} \
+	-eval trio.vcf \
+	-comp trio.phased.vcf \
+	-o trio.phased.txt
+
