@@ -19,7 +19,7 @@
 #### filtration des doublons dans les données (fonction "grep")
 #### boucle afin de construire un seul alignement pour le pere : 
 #### définition d'une liste, pour l'instant vide,
-####pour les 8 premiers runs, algnement à la reference, filtrage, tri et ajout à la liste précédemment créée
+#### pour les 8 premiers runs, algnement à la reference, filtrage, tri et ajout à la liste précédemment créée
 #### Assemblage des alignements (samtool merge)
 #### Indexation
 
